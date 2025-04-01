@@ -13,12 +13,12 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "DBMS/Notes.md",
+                "file": "DBMS/readme.md.md",
                 "mode": "source",
                 "source": false
               },
               "icon": "lucide-file",
-              "title": "Notes"
+              "title": "readme.md"
             }
           }
         ]
@@ -165,7 +165,7 @@
       "command-palette:Open command palette": false
     }
   },
-  "active": "9db0df278d97c4f9",
+  "active": "c37faaea43f29988",
   "lastOpenFiles": [
     "Notes.md",
     "DBMS",
