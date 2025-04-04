@@ -52,4 +52,11 @@
 - high level / conceptual data model:
 	+ represent data close to how users perceive the data
 	+ entity, attributes and relationships are mentioned here
-	+ 
++ low level / physical data model
+	+ describe how data is stored in the computer
+	+ not to be used by normal users
+	+ represent info as records, formats, 
++ representational data models
+
+- database schema - the description of a database is called the schema
+- 
