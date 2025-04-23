@@ -160,7 +160,7 @@ things to consider
 	- AS responds with a message that is encrypted using the password of the user, the message contains - ticket, timestamp, lifetime, ID<sub>tgs</sub> to confirm that the ticket is for TGS and also a session key (K<sub>c,tgs</sub>) 
 	- the session key can only be accessed by the client as it is encrypted using the client's password. The session key is delivered to TGS by Ticket<sub>tgs</sub>, that ticket is encrypted by a key shared between AS and TGS.
 	- In step 3 the client sends to TGS, the id of the service needed (ID<sub>v</sub>), Ticket<sub>tgs</sub>, and Authenticator
-	- Authenticator contains ID and address of C and also timestamp, the authenticator is encrypted using the secret session key
+	- Authenticator contains ID and address of C and also timestamp, the authenticator is encrypted using the secret session key, authenticator is used to prove the client's identity
 	- TGS decrypt the Ticket<sub>tgs</sub> to get the secret session key (K<sub>c,tgs</sub>) and uses it to decrypt the authenticator and check if the details in the authenticator match with the current client and can then confirm that the sender of the client is indeed the ticket's real owner. 
 		- TGS can make this assumption because the ticket was created by AS which was encrypted by a key shared between AS and TGS and cannot be modified by a client, and the secret session key (K<sub>c,tgs</sub>) is also created by AS and encrypted by using the user's password so it is only know to the user. So if the user has the correct session key then we can confirm the user's identity
 	- in step 4 TGS return a message to C encrypted using secret session key(K<sub>c,tgs</sub>) which contain the service granting ticket -Ticket<sub>v</sub> , new secret session key(K<sub>c,v</sub>), ID of server and timestamp
@@ -209,4 +209,34 @@ things to consider
 - Technical Deficiencies
 	1. **Double Encryption** - The tickets in version 4 are encrypted twice using the secret key of the target server and again with a secret key know to the client, the second encryption is completely wasteful
 	2. **PCBC encryption** - encryption on version 4 uses non standard mode of DES know as Propagating Cipher Block Chaining, it is vulnerable, Version 5 provides integrity mechanisms allowing the standard CBC mode to be used for encryption. checksum or hash code is attached to the message prior to encryption using CBC.
-	3. **Session keys** - 
+	3. **Session keys** - in version 4 a session key is included in the ticket that is used by the client to encrypt the authenticator, that session key is also used to protect messages during that session, so there exist a risk where an opponent can replay a message from a previous session to the client or server. In version 5 a subsession key is used for communication. when client does a new access a new subsession key is used.
+	4. **Password attacks** - both version 4 and 5 are susceptible to password attacks. Message from the As is encrypted by the password of the user, an opponent can capture the message and try guessing the password and can find the password. version 5 provides preauthentication which makes password attacks more difficult but still there is a possibility 
+##### Version 5 authentication dialogue
+![[Pasted image 20250423092833.png]]
+- new elements added on top of version 4:
+	- Realm - Indicate realm of user
+	- Options - request which flags need to be set in returned ticket
+	- Times - used to set the time settings of the ticket such as
+		- from - start of validity of ticket
+		- till - when the ticket should expire
+		- rtime - upto to what time a renew of ticket can be requested
+	- Nonce - a random value to ensure that the message is not a replay
+- working:
+	- in message(1) client request AS for ticket-granting ticket, it is like version 4 but there are additional contents in the message 
+	- in message(2) client receives Ticket<sub>tgs</sub>, ID of client and a block encrypted by the users password
+	- the encrypted block contains secret session key between tgs and c, Times and Nonce from message(1), Realm of TGS and ID of tgs
+	- The ticket received in message(2) includes the session key, identifying information for the client, the requested time values, and flags that reflect the status of this ticket and the requested options.
+	- Like in Version 4 in message(3) C sends to TGS, Ticket<sub>tgs</sub>, ID of server whose service is needed, authenticator and additionally sends Time, Nonce and options
+	- Authenticator used here is slightly different from the one in version4
+	- Message(4) is like message(2) , TGS returns to client a new session key for communicating with server K<sub>c,v</sub>, Ticket<sub>v</sub> and some info encrypted in the secret key shared between client and TGS K<sub>c,tgs</sub>
+	- in message(5) client sends Options, Ticket<sub>v</sub> and authenticator to server, in the options client can request for mutual authentication
+	- The authenticator used here also has two new fields
+		- subkey - client can specify a session key to protect this session, if left blank then K<sub>c,v</sub> will be used
+		- sequence number - a starting sequence number to be used by server for messages send to the client during this session, used to detect replay attacks
+	- message(6) is send only if in message(5) client set the option for mutual authentication
+	- the server sends the same timestamp received from the authenticator in message(5), subkey and sequence number to the client
+	- if subkey is present in message(6) it will override the subkey in message(5) and sequence number is an options field that specifies the starting sequence number to be used by the client
+#### X.509 Certificates
+
+
+
