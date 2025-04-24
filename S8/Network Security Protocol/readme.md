@@ -5,7 +5,7 @@
 - **message authentication** - process of verifying if the contents of a message have not been altered and the source is authentic
 #### NIST model for electronic user authentication
 - NIST SP 800-63 defines a general model for user authentication 
-![model diagram](images/20250409215407.png)
+![model diagram](/images/20250409215407.png)
 
 - Three important concepts used in this model:
 	1. **Digital Identity** - unique representation of a subject engaged in an online transaction
