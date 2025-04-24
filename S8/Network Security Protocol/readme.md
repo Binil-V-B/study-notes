@@ -51,7 +51,7 @@ things to consider
 - KDC is responsible for the generation and distribution of session keys using the secret keys
 
 1. Needham and Schroeder - NEED78
-	- ![[Pasted image 20250410224408.png]]
+	- ![NEED78]("/images/Pasted image 20250410224408.png")
 	- the purpose of the protocol is to distribute a session key K<sub>s</sub>
 	- A sends a message to KDC saying that A wants to communicate with B and also sends a nonce
 	- KDC reply with message that is encrypted with K<sub>a</sub> and it contain K<sub>s</sub>, ID<sub>B</sub>, nonce and an encrypted part(ticket) that will be forwarded to B
